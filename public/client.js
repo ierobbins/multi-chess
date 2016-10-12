@@ -20,6 +20,12 @@ function initGame(){
 
 function handleMove(source, target){
   let move = game.move({from: source, to: target});
+
   if(move === null) return "snapback";
   else socket.emit("move", move);
 }
+
+socket.on("move", msg => {
+  game.move(msg);
+  board.position(game.fen());
+});
