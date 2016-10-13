@@ -4,9 +4,9 @@ var game;
 //setup my socket client
 const socket = io();
 
-window.onload = () => {
-  initGame();
-}
+// window.onload = () => {
+//   initGame();
+// }
 
 function initGame(){
   const cfg = {

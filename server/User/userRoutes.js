@@ -5,29 +5,27 @@ const userCtrl = require("./userCtrl");
 
 module.exports = app => {
 
-  app.get("/auth/facebook", passport.authenticate("facebook", {scope: ["email"]}));
-
+  app.get("/auth/facebook", passport.authenticate("facebook"));
   app.get("/auth/facebook/callback", passport.authenticate("facebook", {
-    successRedirect: "/#/search"
-    , failureRedirect: "/#/login"
-  }), (req, res) => {
-    console.log(res);
-    console.log(req);
+    successRedirect : "/#/search",
+    failureRedirect : "/"
+  }));
+
+  passport.serializeUser(function(user, done){
+    done(null, user);
   });
 
-  passport.serializeUser((user, done) => {
-    done(null, user.id);
+  passport.deserializeUser(function(user, done){
+    done(null, user);
   });
 
-  passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-      done(err, user);
-    });
-  });
-
-  app.get("/api/facebook", userCtrl.checkLogin, (req, res) => {
+  app.get("/api/facebook", userCtrl.checkLogin, (req, res, next) => {
     res.send(req.user);
   });
+
+  app.get("/api/users/facebook/:id", userCtrl.checkLogin, userCtrl.getUserById);
+
+  app.post("/api/users/facebook", userCtrl.checkLogin, userCtrl.postUser);
 
 
 

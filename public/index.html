@@ -1,14 +1,36 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="chessApp">
   <head>
     <meta charset="utf-8">
     <title>multi chess</title>
     <link rel="stylesheet" href="/resources/library/chessboard-0.3.0.min.css">
-    <link rel="stylesheet" href="styles.css" media="screen" title="no title">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
   </head>
   <body>
-    
-    <div id="gameBoard"></div>
+    <nav class="navbar navbar-inverse">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Deep Purple</a>
+        </div>
+      </div>
+    </nav>
+    <div class="container">
+      <ui-view></ui-view>
+
+    </div>
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
+    <script src="app.js"></script>
+    <script src="controllers/examineCtrl.js"></script>
+    <script src="controllers/gameCtrl.js"></script>
+    <script src="controllers/leaderboardsCtrl.js"></script>
+    <script src="controllers/loginCtrl.js"></script>
+    <script src="controllers/profileCtrl.js"></script>
+    <script src="controllers/searchCtrl.js"></script>
+    <script src="services/userService.js"></script>
     <script src="../socket.io/socket.io.js"></script>
     <script src="./resources/library/chess.min.js"></script>
     <script src="./resources/library/chessboard-0.3.0.min.js"></script>
