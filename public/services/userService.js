@@ -1,7 +1,5 @@
 angular.module("chessApp")
-.service("userService", function($http){
-
-  let currentUser = {};
+.service("userService", function($http, $rootScope){
 
   this.getCurrentUser = function(){
     return $http.get("/api/facebook").then(response => {

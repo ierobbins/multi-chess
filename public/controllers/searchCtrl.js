@@ -19,4 +19,8 @@ angular.module("chessApp")
 
   $scope.getCurrUser();
 
+  
+
+  const socket = io("http://localhost:8888", {query: "user=" + currentUser.facebookId})
+
 });

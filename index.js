@@ -55,8 +55,8 @@ server.listen(port, () => console.log(`Express is listening on port ${port}`));
 
 
 const connections = [];
-const users = [];
-const games = [];
+const users = 0;
+const currentGames = {};
 
 io.on("connection", socket => {
   connections.push(socket);
