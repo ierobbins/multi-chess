@@ -20,7 +20,7 @@ angular.module("chessApp", ["ui.router"])
       , controller: "profileCtrl"
     })
     .state("game", {
-      url: "/game/:id"
+      url: "/game/:gameId"
       , templateUrl: "./views/game.html"
       , controller: "gameCtrl"
     })

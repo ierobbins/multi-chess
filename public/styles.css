@@ -1,10 +1,7 @@
-body{
-
-}
-
 #gameBoard{
   width: 600px;
 }
+
 .games-list{
   margin: 30px;
 }

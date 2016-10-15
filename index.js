@@ -23,9 +23,9 @@ const masterRoutes = require("./server/masterRoutes");
 app.use(bodyParser.json());
 app.use(express.static(`${__dirname}/public`));
 app.use(session({
-  secret: "keyboard cat"
-  , resave: false
-  , saveUninitialized: false
+    secret: "keyboard cat"
+    , resave: false
+    , saveUninitialized: false
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -43,11 +43,9 @@ passport.use(new FacebookStrategy({
     , profileFields: ["id", "picture", "email", "first_name", "last_name", "link", ]
   }
   , (accessToken, refreshToken, profile, done) => {
-      return done(null, profile);
+        return done(null, profile);
     }
 ));
-
-
 
 server.listen(port, () => console.log(`Express is listening on port ${port}`));
 
@@ -55,21 +53,102 @@ server.listen(port, () => console.log(`Express is listening on port ${port}`));
 
 
 const connections = [];
-const users = 0;
 const currentGames = {};
 
 io.on("connection", socket => {
-  connections.push(socket);
-  console.log(`New connection ${connections.length} socket(s) now connected on ${port}`);
+    connections.push(socket);
+    console.log(`New connection ${connections.length} socket(s) now connected on ${port}`);
 
-  socket.on("disconnect", data => {
-    connections.splice(connections.indexOf(data), 1);
-    console.log(`Disconnected, ${connections.length} socket(s) now connected on ${port}`);
-  })
+    socket.on("disconnect", data => {
+        connections.splice(connections.indexOf(data), 1);
+        console.log(`Disconnected, ${connections.length} socket(s) now connected on ${port}`);
+
+        for(let key in currentGames){
+            for(let i = 0; i < currentGames[key].players.length; i++){
+                if(players[i].socket === socket){
+                    socket.broadcast.to(key).emit("opponent-disconnect");
+                    delete currentGames[token];
+                    updateRooms();
+                }
+            }
+        }
+    })
 
 
-  socket.on("move", msg => {
-    console.log(msg);
-    socket.broadcast.emit("move", msg)
-  });
+    socket.on("join", data => {
+
+        const room = data.gameId;
+
+        if(!(room in currentGames)){
+            let players = [{
+                socket: socket
+                , player: data.player
+                , side: data.side
+                , status: "joined"
+                }, {
+                socket: null
+                , name: ""
+                , side: data.side === "white" ? "black" : "white"
+                , status: "open"
+                }
+            ];
+            currentGames[room] = {
+                room: room
+                , host: data.host
+                , status: "waiting"
+                , timeMade: Date.now()
+                , players: players
+            };
+
+            socket.join(room);
+            socket.to(room).emit("wait");
+            updateRooms();
+            return;
+
+        }
+
+        const game = currentGames[room];
+
+        if(game.status === "ready"){
+             socket.emit("full");
+        } else {
+            socket.join(room);
+            game.players[1].socket = socket;
+            game.players[1].player = data.player;
+            game.players[1].status = "joined";
+            game.status = "ready";
+            io.sockets.to(room).emit("ready", currentGames[room]);
+            updateRooms();
+        }
+    });
+
+    // BROADCASTS NEW MOVE TO THE OTHER PLAYER IN THE GAME
+    socket.on("move", data => {
+        console.log(data);
+        socket.broadcast.to(data.gameId).emit("move", data);
+    });
+
+    socket.on("resign", data => {
+        const room = data.gameId;
+        if(room in currentGames){
+            io.sockets.to(room).emit("player-resigned", {"side": data.side});
+            currentGames[room].players[0].socket.leave(room);
+            currentGames[room].players[1].socket.leave(room);
+            delete currentGames[room];
+            updateRooms();
+        }
+    });
+
+    function updateRooms(){
+        io.sockets.emit("get games", currentGames);
+    }
+
+    function getPlayer(room, side){
+        let game = currentGames[room];
+        for(let i = 0; i < game.players.length; i++){
+            if(players[i].side === side){
+                return player[i];
+            }
+        }
+    }
 });

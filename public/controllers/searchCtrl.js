@@ -1,14 +1,10 @@
 angular.module("chessApp")
 .controller("searchCtrl", function($scope, userService, sockets){
 
-  $scope.getCurrUser = function(){
     userService.getCurrentUser()
       .then(user => {
         $scope.currentUser = user
       });
-  }
-
-  $scope.getCurrUser();
 
   $scope.createNewGame = function(){
     console.log($scope.color);
