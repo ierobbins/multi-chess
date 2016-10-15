@@ -6,13 +6,36 @@
     <h4>Link: {{currentUser.link}}</h4>
     <h4></h4>
   </div>
+
   <div class="row">
-    <div class="col-md-6 well">
+
+    <div class="col-md-4">
+      <button type="button" class="btn tbn-primary" ng-click="createNewGame()">Create New Game</button>
+    </div>
+
+    <div class="col-md-4">
+      <p>player type</p>
+      <form>
+        <label class="radio-inline"><input type="radio" name="opponent-type" ng-model="opponentType">Human</label>
+        <label class="radio-inline"><input type="radio" name="opponent-type" ng-model="opponentType">AI</label>
+      </form>
+    </div>
+
+    <div class="col-md-4">
+      <p>Color</p>
+      <form>
+        <label class="radio-inline"><input type="radio" name="color" ng-model="color" value="white">White</label>
+        <label class="radio-inline"><input type="radio" name="color" ng-model="color" value="black">Black</label>
+      </form>
+    </div>
+  </div>
+
+  <div class="row games-list">
+    <div class="col-md-1"></div>
+    <div class="col-md-10 well">
 
     </div>
-    <div class="col-md-6 well">
-
-    </div>
+    <div class="col-md-1"></div>
 
   </div>
 </div>

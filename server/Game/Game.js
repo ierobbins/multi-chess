@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 const Game = new mongoose.Schema({
-  host: {type: mongoose.Schema.Type.ObjectId, ref: "User"}
-  , white: {type: mongoose.Schema.Type.ObjectId, ref: "User"}
-  , black: {type: mongoose.Schema.Type.ObjectId, ref: "User"}
+  host: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
+  , white: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
+  , black: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
   , moves: [{
       move: {type: "String"}
       , fen: {type: "String"}

@@ -1,5 +1,5 @@
 angular.module("chessApp")
-.factory("scokets", function($rootScope){
+.factory("sockets", function($rootScope){
 
   var socket = io.connect();
 
@@ -24,5 +24,5 @@ angular.module("chessApp")
       });
     }
   };
-  
+
 });

@@ -1,26 +1,24 @@
 angular.module("chessApp")
-.controller("searchCtrl", function($scope, userService, $timeout){
-
-  $scope.currentUser = {};
+.controller("searchCtrl", function($scope, userService, sockets){
 
   $scope.getCurrUser = function(){
     userService.getCurrentUser()
       .then(user => {
-        $scope.currentUser = {
-          firstName: user._json.first_name
-          , lastName: user._json.last_name
-          , email: user._json.email
-          , facebookId: user.id
-          , link: user.profileUrl
-          , profilePictureUrl: user._json.picture.data.url
-        }
+        $scope.currentUser = user
       });
   }
 
   $scope.getCurrUser();
 
-  
-
-  const socket = io("http://localhost:8888", {query: "user=" + currentUser.facebookId})
+  $scope.createNewGame = function(){
+    console.log($scope.color);
+    if($scope.color === "white"){
+      console.log($scope.currentUser);
+      userService.postNewGame({host: $scope.currentUser._id, white: $scope.currentUser._id});
+    }
+    if($scope.color === "black"){
+      userService.postNewGame({host: $scope.currentUser._id, black: $scope.currentUser._id});
+    }
+  }
 
 });
