@@ -23,6 +23,9 @@ angular.module("chessApp", ["ui.router"])
       url: "/game/:gameId"
       , templateUrl: "./views/game.html"
       , controller: "gameCtrl"
+      , params: {
+          user: null
+      }
     })
     .state("leaderboards", {
       url: "/leaderboards/:id"

@@ -1,5 +1,5 @@
 angular.module("chessApp")
-.factory("sockets", function($rootScope){
+.factory("socket", function($rootScope){
 
   var socket = io.connect();
 
@@ -23,6 +23,15 @@ angular.module("chessApp")
         });
       });
     }
+
+    , removeAllListeners: function (eventName, callback) {
+          socket.removeAllListeners(eventName, function() {
+              var args = arguments;
+              $rootScope.$apply(function () {
+                callback.apply(socket, args);
+              });
+          });
+      }
   };
 
 });

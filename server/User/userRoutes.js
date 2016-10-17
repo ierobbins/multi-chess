@@ -23,7 +23,11 @@ module.exports = app => {
     res.send(req.user);
   });
 
-  app.get("/api/users/facebook/:id", userCtrl.checkLogin, userCtrl.getUserById);
+  app.route("/api/users/facebook/:id")
+      .get(userCtrl.checkLogin, userCtrl.getUserById)
+      .put(userCtrl.addGameToPlayer);
+
+  app.get("/api/user/fb/:id", userCtrl.getUserById);
 
   app.post("/api/users/facebook", userCtrl.checkLogin, userCtrl.postUser);
 

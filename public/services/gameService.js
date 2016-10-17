@@ -1,18 +1,145 @@
 angular.module("chessApp")
-.service("gameService", function($scope, $http, $rootScope, $stateParams, sockets, userService){
+.service("gameService", function($http, $rootScope, socket, userService){
 
-    socket.on("wait", () => {
-        //do some kind of modal waiting thing
-    })
+    let userSide;
+    let opponentSide;
+    let player;
+    let opponent;
+    let game;
+    let board;
+    let gameId;
 
-    socket.on("ready" data => {
-        if()
+    ////////// GETTERS \\\\\\\\\\
+    this.getGame = function(){
+        return game;
+    }
 
-    });
+    this.getBoard = function(){
+        return board;
+    }
 
-    socket.on("ready", data => {
+    this.getOpponent = function(){
+        return opponent;
+    }
 
-    });
+    this.getGameId = function(){
+        return gameId;
+    }
+
+    ////////// STARTS THE GAME WHEN THE CONTROLLER RECIEVES THE READY SIGNAL FROM THE SOCKET \\\\\\\\\\
+    this.startGame = function(initGame, user){
+        player = (initGame.players[0].player === user._id) ? "host" : "guest";
+        gameId = initGame.room;
+        if(player === "host"){
+            userSide = initGame.players[0].side;
+            opponentSide = initGame.players[1].side;
+            opponent = initGame.players[1].player;
+        } else {
+            userSide = initGame.players[1].side;
+            opponentSide = initGame.players[0].side;
+            opponent = initGame.players[0].player;
+        }
+
+        this.getOpponent(opponent);
+
+        if(initGame.players[1].side === "white"){
+            this.addWhitePlayer(initGame.players[1].player);
+        } else {
+            this.addBlackPlayer(initGame.players[1].player);
+        }
+
+        if(player === "host"){
+            this.addGameToPlayer(initGame.players[0].player);
+        } else {
+            this.addGameToPlayer(initGame.players[1].player);
+        }
+
+        this.createBoard(userSide);
+    }
+
+
+    ////////// $HTTP STUFF \\\\\\\\\\
+    this.getOpponent = function(playerId){
+        return $http.get("/api/user/fb/:id").then(response => {
+            return response.data;
+        });
+    }
+
+    this.addWhitePlayer = function(playerId){
+        return $http.put("/api/game/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
+            .then(response => {
+                return response.data;
+            });
+    }
+
+    this.addBlackPlayer = function(playerId){
+        return $http.put("/api/game/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
+            .then(response => {
+                return response.data;
+            });
+    }
+
+    this.addGameToPlayer = function(playerId){
+        return $http.put("/api/users/facebook/:id").then(response => {
+            return response.data;
+        });
+    }
+
+
+    //////// BOARD VALID MOVE FUNCTIONS \\\\\\\\\\
+    // this.onDragStart = function(source ,piece, position, orientation){
+    //     if(game.gameOver() === true || game.turn() === "w" && piece.search(/^b/) !== -1
+    //        game.turn() === "b" && piece.search(/^w/) !== -1 || game.turn() !== side.charAt(0)){
+    //            return false;
+    //        }
+    // }
+    //
+    // this.onDrop = function(source, target, piece, newPos, oldPos, orientation){
+    //     let move = game.move({
+    //         from: source
+    //         , to: target
+    //         promotion: 'q'
+    //     });
+    //
+    //     if(move === null) { return "snapback"; }
+    //
+    //     move.pgn = game.pgn();
+    //     move.fen = game.fen();
+    //     socket.emit("move", {
+    //         room: gameId
+    //         , source: source
+    //         , target: target
+    //         , piece: piece
+    //         , newPosition: ChessBoard.objToFen(newPos)
+    //         , oldPosition: ChessBoard.objToFen(oldPos)
+    //     });
+    // }
+    //
+    // this.onSnapEnd = function(){
+    //     board.position(game.fen());
+    // }
+
+    this.createBoard = function(side){
+        game = new Chess();
+        const cfg = {
+            draggable: true
+            , position: start
+            , moveSpeed: "slow"
+            , onDragStart: onDragStart
+            , onSnapEnd: onSnapEnd
+            , onDrop: onDrop
+            , snapbackSpeed: 500
+            , snapSpeed: 150
+            , orientation: userSide
+        };
+        board = new ChessBoard("gameBoard", cfg);
+    }
+
+
+
+    // socket.on("ready" data => {
+    //
+    // });
 
     // window.onload = () => {
     // //   initGame();
@@ -40,4 +167,4 @@ angular.module("chessApp")
     //   board.position(game.fen());
     // });
 
-})
+});

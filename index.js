@@ -51,23 +51,25 @@ server.listen(port, () => console.log(`Express is listening on port ${port}`));
 
 
 
-
+const gameCtrl = require("./server/Game/gameCtrl");
 const connections = [];
 const currentGames = {};
 
 io.on("connection", socket => {
     connections.push(socket);
     console.log(`New connection ${connections.length} socket(s) now connected on ${port}`);
+    updateRooms();
 
     socket.on("disconnect", data => {
         connections.splice(connections.indexOf(data), 1);
         console.log(`Disconnected, ${connections.length} socket(s) now connected on ${port}`);
 
         for(let key in currentGames){
-            for(let i = 0; i < currentGames[key].players.length; i++){
-                if(players[i].socket === socket){
+            let game = currentGames[key]
+            for(let i = 0; i < game.players.length; i++){
+                if(game.players[i].socket === socket){
                     socket.broadcast.to(key).emit("opponent-disconnect");
-                    delete currentGames[token];
+                    delete currentGames[key];
                     updateRooms();
                 }
             }
@@ -76,7 +78,6 @@ io.on("connection", socket => {
 
 
     socket.on("join", data => {
-
         const room = data.gameId;
 
         if(!(room in currentGames)){
@@ -99,14 +100,13 @@ io.on("connection", socket => {
                 , timeMade: Date.now()
                 , players: players
             };
-
             socket.join(room);
-            socket.to(room).emit("wait");
+            socket.emit("wait");
+            console.log(currentGames[room])
             updateRooms();
             return;
 
         }
-
         const game = currentGames[room];
 
         if(game.status === "ready"){
@@ -124,6 +124,7 @@ io.on("connection", socket => {
 
     // BROADCASTS NEW MOVE TO THE OTHER PLAYER IN THE GAME
     socket.on("move", data => {
+
         console.log(data);
         socket.broadcast.to(data.gameId).emit("move", data);
     });

@@ -1,31 +1,24 @@
 angular.module("chessApp")
-.service("userService", function($http, $rootScope, sockets, $state, $q){
-    var user;
+.service("userService", function($http, $rootScope, socket, $state, $q){
 
-  this.getCurrentUser = function(){
-    if(!user) {
+    this.getCurrentUser = function(){
         return $http.get("/api/facebook").then(response => {
-          user = response.data;
-          return user;
+            return response.data;
         });
-    } else {
-        return $q.when(user);
     }
-  }
 
-  this.postNewGame = function(obj){
-    return $http.post("/api/game", obj).then(response => {
-      return response.data;
-      let color = "white";
-      if(!response.data.white){color = "black";}
-        socket.emit("join", {
-          gameId: response.data._id
-          , player: response.data.host
-          , side: color
+    this.postNewGame = function(obj, user){
+        return $http.post("/api/game", obj).then(response => {
+            let color = "white";
+            if(!response.data.white){color = "black";}
+            socket.emit("join", {
+                gameId: response.data._id
+                , player: response.data.host
+                , side: color
+            });
+            socket.removeAllListeners();
+            $state.go("game", {gameId: response.data._id, user: user});
         });
-
-      $state.go("game", {gameId: response.data._id});
-    });
-  }
+    }
 
 });

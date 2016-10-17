@@ -9,6 +9,7 @@ const Game = new mongoose.Schema({
       , fen: {type: "String"}
   }]
   , time: "String"
+  , creationDate: "String"
   , status: "String"
 });
 
