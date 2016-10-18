@@ -84,13 +84,11 @@ io.on("connection", socket => {
 
         if(!(room in currentGames)){
             let players = [{
-                //socket: socket
                 player: data.player
                 , side: data.side
                 , status: "joined"
                 }, {
-                //socket: null
-                , player: {}
+                player: {}
                 , side: data.side === "white" ? "black" : "white"
                 , status: "open"
                 }
@@ -115,9 +113,7 @@ io.on("connection", socket => {
         if(game.status === "ready"){
              socket.emit("full");
         } else {
-            console.log("THIS IS WHEN A SECOND USER LOGS IN", data);
             socket.join(room);
-            //game.players[1].socket = socket;
             game.players[1].player = data.player;
             game.players[1].status = "joined";
             game.status = "ready";

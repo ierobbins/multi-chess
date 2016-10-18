@@ -78,14 +78,14 @@ angular.module("chessApp")
     }
 
     this.addWhitePlayer = function(playerId){
-        return $http.put("/api/game/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
+        return $http.put("/api/game/addWhite/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
             .then(response => {
                 return response.data;
             });
     }
 
     this.addBlackPlayer = function(playerId){
-        return $http.put("/api/game/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
+        return $http.put("/api/game/addBlack/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
             .then(response => {
                 return response.data;
             });
@@ -98,14 +98,14 @@ angular.module("chessApp")
     }
 
     this.addMove = function(gameId, move){
-        return $http.put("/api/game/:id", {id: gameId, move: move}).then(response => {
-            return response.data; //TODO in the backend
+        return $http.put("/api/game/addMove/:id", {id: gameId, move: move}).then(response => {
+            return response.data;
         });
     }
 
     this.gameOver = function(gameId, winColor, endStatus){
-        return $http.put("/api/game/:id", {id: gameId, winner: winColor, status: endStatus}).then(response => {
-            return response.data; //TODO in the backend
+        return $http.put("/api/game/gameOver/:id", {id: gameId, winner: winColor, status: endStatus}).then(response => {
+            return response.data;
         });
     }
 
@@ -127,15 +127,16 @@ angular.module("chessApp")
             , to: target
             , promotion: 'q'
         });
-
         if(move === null) { return "snapback"; }
 
-        move.pgn = game.pgn();
-        move.fen = game.fen();
+        let newMove = {};
+        newMove.pgn = game.pgn();
+        newMove.fen = game.fen();
         socket.emit("move", {
             room: gameId
             , source: source
             , target: target
+            , move: newMove
             , piece: piece
             , newPosition: ChessBoard.objToFen(newPos)
             , oldPosition: ChessBoard.objToFen(oldPos)

@@ -9,7 +9,7 @@ const Game = new mongoose.Schema({
       move: {type: "String"}
       , fen: {type: "String"}
   }]
-  , time: "String"
+  , time: {type: "Number", enum: [5, 10, 15, 30]}
   , creationDate: "String"
   , status: "String"
 });

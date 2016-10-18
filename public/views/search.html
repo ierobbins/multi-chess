@@ -29,48 +29,44 @@
       </form>
     </div>
     <div class="dropdown col-md-3">
-        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
-            Dropdown Example
+        <!-- <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Choose Time
             <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu">
-            <li ng-model="time" value="5">5 Minutes</li>
-            <li ng-model="time" value="10">10 Minutes</li>
-            <li ng-model="time" value="15">15 Minutes</li>
-            <li ng-model="time" value="30">30 Minutes</li>
-        </ul>
+        </button> -->
+        <select class="form-control" ng-model="time">
+            <option value="30">30 Minutes</option>
+            <option value="15">15 Minutes</option>
+            <option value="10">10 Minutes</option>
+            <option value="5">5 Minutes</option>
+        </select>
     </div>
   </div>
 
   <div class="row games-list">
-    <div class="col-md-1"></div>
-    <div class="col-md-10 well">
+    <div class="col-md-12 well">
         <div class="table-responsive">
             <table class="table table-bordered">
                 <thead>
                     <tr>
                         <th><strong>White</strong></th>
                         <th><strong>Black</strong></th>
+                        <th><strong>Time</strong></th>
                         <th><strong>Status</strong></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="room in games">
-                        <th><strong>{{room.white}}</strong></th>
-                        <th><strong>{{room.black}}</strong></th>
+                    <tr ng-repeat="room in games" class="game-item">
+                        <th><strong>{{room.white.firstName}} {{room.white.lastName}} {{room.white.fide}}</strong></th>
+                        <th><strong>{{room.black.firstName}} {{room.black.lastName}} {{room.black.fide}}</strong></th>
+                        <th><strong>{{room.time}}</strong></th>
                         <th>
                             <strong>{{room.status}}</strong>
-                            <button type="button" ng-click="joinGame(room.room)">Join Game</button>
+                            <button type="button" ng-click="joinGame(room)">Join Game</button>
                         </th>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <div class="game-item" ng-repeat="room in games">
-
-        </div>
     </div>
-    <div class="col-md-1"></div>
-
   </div>
 </div>

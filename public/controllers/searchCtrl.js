@@ -8,11 +8,13 @@ angular.module("chessApp")
 
     $scope.createNewGame = function(){
         user = $scope.currentUser;
+        let newTime = parseInt($scope.time);
+        console.log("THIS IS NEW TIME \n\n\n\n", newTime, $scope.time);
         if($scope.color === "white"){
             userService.postNewGame({
                 host: $scope.currentUser._id
                 , white: $scope.currentUser._id
-                , time: $scope.time
+                , time: newTime
                 , status: "waiting"
                 , creationDate: new Date()
                 }, user);
@@ -21,15 +23,16 @@ angular.module("chessApp")
             userService.postNewGame({
                 host: $scope.currentUser._id
                 , black: $scope.currentUser._id
-                , time: $scope.timeout
+                , time: newTime
                 , status: "waiting"
-                , creationDate: new Date();
+                , creationDate: new Date()
                 }, user);
         }
     }
 
-    $scope.joinGame = function(gameId){
-        userService.joinGame(gameId, $scope.currentUser);
+    $scope.joinGame = function(room){
+        let side = (room.players[0].side === "white") ? "black" : "white";
+        userService.joinGame(room.room, $scope.currentUser, side, room.time);
     }
 
     socket.on("get games", data => {
@@ -53,6 +56,6 @@ angular.module("chessApp")
             }
             $scope.games.push(data[room]);
         }
-    })
+    });
 
 });

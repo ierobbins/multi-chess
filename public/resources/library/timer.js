@@ -5,7 +5,7 @@ class Stopwatch {
         this.results = results;
         this.laps = [];
         this.times = [initTime, 0, 0];
-        this.reset();
+        //this.reset();
         this.print(this.times);
     }
 
@@ -71,6 +71,8 @@ class Stopwatch {
                 this.times[0] --;
             }
             this.times[2] -= diff / 10;
+        } else {
+            this.stop();
         }
     }
 
