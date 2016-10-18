@@ -60,6 +60,8 @@ io.on("connection", socket => {
     console.log(`New connection ${connections.length} socket(s) now connected on ${port}`);
     updateRooms();
 
+    socket.on("error", err => console.log( err, "On error" ) );
+
     socket.on("disconnect", data => {
         connections.splice(connections.indexOf(data), 1);
         console.log(`Disconnected, ${connections.length} socket(s) now connected on ${port}`);
@@ -74,7 +76,7 @@ io.on("connection", socket => {
                 }
             }
         }
-    })
+    });
 
 
     socket.on("join", data => {
@@ -82,27 +84,28 @@ io.on("connection", socket => {
 
         if(!(room in currentGames)){
             let players = [{
-                socket: socket
-                , player: data.player
+                //socket: socket
+                player: data.player
                 , side: data.side
                 , status: "joined"
                 }, {
-                socket: null
-                , name: ""
+                //socket: null
+                , player: {}
                 , side: data.side === "white" ? "black" : "white"
                 , status: "open"
                 }
             ];
             currentGames[room] = {
                 room: room
-                , host: data.host
                 , status: "waiting"
-                , timeMade: Date.now()
+                , time: data.time
+                , timeMade: new Date()
                 , players: players
             };
             socket.join(room);
             socket.emit("wait");
-            console.log(currentGames[room])
+            console.log(currentGames[room]);
+            console.log("*************\n\n", currentGames, "\n\n*******************");
             updateRooms();
             return;
 
@@ -112,8 +115,9 @@ io.on("connection", socket => {
         if(game.status === "ready"){
              socket.emit("full");
         } else {
+            console.log("THIS IS WHEN A SECOND USER LOGS IN", data);
             socket.join(room);
-            game.players[1].socket = socket;
+            //game.players[1].socket = socket;
             game.players[1].player = data.player;
             game.players[1].status = "joined";
             game.status = "ready";
@@ -124,9 +128,8 @@ io.on("connection", socket => {
 
     // BROADCASTS NEW MOVE TO THE OTHER PLAYER IN THE GAME
     socket.on("move", data => {
-
         console.log(data);
-        socket.broadcast.to(data.gameId).emit("move", data);
+        io.sockets.to(data.room).emit("move", data);
     });
 
     socket.on("resign", data => {
@@ -138,6 +141,13 @@ io.on("connection", socket => {
             delete currentGames[room];
             updateRooms();
         }
+    });
+
+    socket.on("time", data => {
+        io.sockets.to(data.room).emit("time", {
+            win: data.win
+            , lose: data.lose
+        });
     });
 
     function updateRooms(){

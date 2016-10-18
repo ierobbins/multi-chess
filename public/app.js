@@ -25,6 +25,8 @@ angular.module("chessApp", ["ui.router"])
       , controller: "gameCtrl"
       , params: {
           user: null
+          , side: null
+          , time: null
       }
     })
     .state("leaderboards", {

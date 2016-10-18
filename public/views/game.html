@@ -1,8 +1,47 @@
 <h1 ng-show="showWait" style="text-align: center;">WAITING FOR OTHER PLAYER</h1>
 
 
-<div class="row" ng-show="showGame">
+<div class="row" ng-hide="showWait">
+    <!-- BOARD AND CHAT COLUMN -->
     <div class="game-board-wrapper col-md-8">
         <div id="gameBoard"></div>
+        <div class="game-chat well">
+
+        </div>
+    </div>
+
+    <!-- USERS INFO, TIMERS, AND PGN -->
+    <div class="game-info-wrapper col-md-4">
+        <div class="user-info">
+            <div class="opponent-info">
+                <h1>{{opponent.firstName}} {{opponent.lastName}}</h1>
+                <h3>{{opponent.fide}}</h3>
+            </div>
+            <div class="stopwatch-wrapper">
+                <div class="opponentTimer"></div>
+                <ul class="oResults"></ul>
+            </div>
+            <div class="captured-pieces">
+
+            </div>
+        </div>
+        <div class="user-info">
+            <div class="captured-pieces">
+
+            </div>
+            <div class="stopwatch-wrapper">
+                <div class="userTimer"></div>
+                <ul class="uResults"></ul>
+            </div>
+            <div class="current-user-info">
+                <h1>{{currentUser.firstName}} {{currentUser.lastName}}</h1>
+                <h3>{{currentUser.fide}}</h3>
+            </div>
+        </div>
+        <div class="pgn-wrapper well">
+            <div class="pgn-element">
+
+            </div>
+        </div>
     </div>
 </div>

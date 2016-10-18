@@ -9,11 +9,11 @@
 
   <div class="row">
 
-    <div class="col-md-4">
+    <div class="col-md-3">
       <button type="button" class="btn tbn-primary" ng-click="createNewGame()">Create New Game</button>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
       <p>player type</p>
       <form>
         <label class="radio-inline"><input type="radio" name="opponent-type" ng-model="opponentType">Human</label>
@@ -21,19 +21,52 @@
       </form>
     </div>
 
-    <div class="col-md-4">
+    <div class="col-md-3">
       <p>Color</p>
       <form>
         <label class="radio-inline"><input type="radio" name="color" ng-model="color" value="white">White</label>
         <label class="radio-inline"><input type="radio" name="color" ng-model="color" value="black">Black</label>
       </form>
     </div>
+    <div class="dropdown col-md-3">
+        <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">
+            Dropdown Example
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li ng-model="time" value="5">5 Minutes</li>
+            <li ng-model="time" value="10">10 Minutes</li>
+            <li ng-model="time" value="15">15 Minutes</li>
+            <li ng-model="time" value="30">30 Minutes</li>
+        </ul>
+    </div>
   </div>
 
   <div class="row games-list">
     <div class="col-md-1"></div>
     <div class="col-md-10 well">
-        <div class="game-item" ng-repeat="game in games">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th><strong>White</strong></th>
+                        <th><strong>Black</strong></th>
+                        <th><strong>Status</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="room in games">
+                        <th><strong>{{room.white}}</strong></th>
+                        <th><strong>{{room.black}}</strong></th>
+                        <th>
+                            <strong>{{room.status}}</strong>
+                            <button type="button" ng-click="joinGame(room.room)">Join Game</button>
+                        </th>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="game-item" ng-repeat="room in games">
 
         </div>
     </div>

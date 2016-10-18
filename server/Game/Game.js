@@ -4,6 +4,7 @@ const Game = new mongoose.Schema({
   host: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
   , white: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
   , black: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
+  , winner: {type: "String", enum: ["white", "black", "draw"]}
   , moves: [{
       move: {type: "String"}
       , fen: {type: "String"}

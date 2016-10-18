@@ -6,6 +6,7 @@ module.exports = app => {
 
   app.route("/api/game/:id")
     .put(gameCtrl.addWhitePlayer)
-    .put(gameCtrl.addBlackPlayer);
+    .put(gameCtrl.addBlackPlayer)
+    .put(gameCtrl.addMove);
 
 };

@@ -27,7 +27,9 @@ module.exports = app => {
       .get(userCtrl.checkLogin, userCtrl.getUserById)
       .put(userCtrl.addGameToPlayer);
 
-  app.get("/api/user/fb/:id", userCtrl.getUserById);
+  app.route("/api/user/fb/:id") 
+      .get(userCtrl.getUserById)
+      .put(userCtrl.addGameToPlayer);
 
   app.post("/api/users/facebook", userCtrl.checkLogin, userCtrl.postUser);
 
