@@ -6,6 +6,7 @@ angular.module("chessApp")
     $scope.opponentSide = ($scope.userSide === "white") ? "black" : "white";
     $scope.gameId       = $stateParams.gameId;
     $scope.time         = $stateParams.time;
+    $scope.status       = "";
 
     $scope.showWait = true;
 
@@ -43,13 +44,10 @@ angular.module("chessApp")
     });
 
     socket.on("move", data => {
-        console.log(data);
         $scope.game.move({from: data.source, to: data.target});
         $scope.board.position($scope.game.fen());
-        console.log($scope.userSide.charAt(0), $scope.game.turn());
-        console.log($scope.opponentSide.charAt(0), $scope.game.turn());
-        console.log($scope.userSide.charAt(0) === $scope.game.turn());
-        console.log($scope.opponentSide.charAt(0) === $scope.game.turn());
+        $scope.capturedPieces = gameService.findCaptured($scope.game.fen()); //TODO
+        $scope.pgn = $scope.game.pgn();
         if($scope.userSide.charAt(0) === $scope.game.turn()){
             $scope.opponentTime.stop();
             $scope.userTime.start();
@@ -62,52 +60,52 @@ angular.module("chessApp")
         }
     });
 
-    $scope.onDragStart = function(source , piece, position, orientation){
-        if($scope.game.game_over() === true ||
-           $scope.game.turn() === "w" && piece.search(/^b/) !== -1 ||
-           $scope.game.turn() === "b" && piece.search(/^w/) !== -1 ||
-           $scope.game.turn() !== $scope.userSide.charAt(0)){
-               return false;
-           }
-    }
-
-    $scope.onSnapEnd = function(){
-        $scope.board.position($scope.game.fen());
-    }
-
-    $scope.onDrop = function(source, target, piece, newPos, oldPos, orientation){
-        let move = $scope.game.move({
-            from: source
-            , to: target
-            , promotion: 'q'
-        });
-        console.log("what the fuck is going on!!!!!!!!!!!!!!!!!!!!!!");
-        if(move === null) { return "snapback"; }
-        console.log($scope.userSide.charAt(0), game.turn());
-        console.log($scope.opponentSide.charAt(0), game.turn());
-        console.log($scope.userSide.charAt(0) === game.turn());
-        console.log($scope.opponentSide.charAt(0) === game.turn());
-        if($scope.userSide.charAt(0) === game.turn()){
-            $scope.opponentTime.stop();
-            $scope.userTime.start();
-        } else if($scope.opponentSide.charAt(0) === game.turn()){
-            $scope.userTime.stop();
-            $scope.opponentTime.start();
-        }
-
-        let initMove = {};
-        initMove.pgn = $scope.game.pgn();
-        initMove.fen = $scope.game.fen();
-        socket.emit("move", {
-            room: $scope.gameId
-            , source: source
-            , target: target
-            , piece: piece
-            , move: initMove
-            , newPosition: ChessBoard.objToFen(newPos)
-            , oldPosition: ChessBoard.objToFen(oldPos)
-        });
-    }
+    // $scope.onDragStart = function(source , piece, position, orientation){
+    //     if($scope.game.game_over() === true ||
+    //        $scope.game.turn() === "w" && piece.search(/^b/) !== -1 ||
+    //        $scope.game.turn() === "b" && piece.search(/^w/) !== -1 ||
+    //        $scope.game.turn() !== $scope.userSide.charAt(0)){
+    //            return false;
+    //        }
+    // }
+    //
+    // $scope.onSnapEnd = function(){
+    //     $scope.board.position($scope.game.fen());
+    // }
+    //
+    // $scope.onDrop = function(source, target, piece, newPos, oldPos, orientation){
+    //     let move = $scope.game.move({
+    //         from: source
+    //         , to: target
+    //         , promotion: 'q'
+    //     });
+    //     console.log("what the fuck is going on!!!!!!!!!!!!!!!!!!!!!!");
+    //     if(move === null) { return "snapback"; }
+    //     console.log($scope.userSide.charAt(0), game.turn());
+    //     console.log($scope.opponentSide.charAt(0), game.turn());
+    //     console.log($scope.userSide.charAt(0) === game.turn());
+    //     console.log($scope.opponentSide.charAt(0) === game.turn());
+    //     if($scope.userSide.charAt(0) === game.turn()){
+    //         $scope.opponentTime.stop();
+    //         $scope.userTime.start();
+    //     } else if($scope.opponentSide.charAt(0) === game.turn()){
+    //         $scope.userTime.stop();
+    //         $scope.opponentTime.start();
+    //     }
+    //
+    //     let initMove = {};
+    //     initMove.pgn = $scope.game.pgn();
+    //     initMove.fen = $scope.game.fen();
+    //     socket.emit("move", {
+    //         room: $scope.gameId
+    //         , source: source
+    //         , target: target
+    //         , piece: piece
+    //         , move: initMove
+    //         , newPosition: ChessBoard.objToFen(newPos)
+    //         , oldPosition: ChessBoard.objToFen(oldPos)
+    //     });
+    // }
 
     if($scope.isHost){
         if($scope.userTime.times[0] < 0){

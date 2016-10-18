@@ -43,7 +43,7 @@ module.exports = {
   }
 
   , addGameToPlayer(req, res){
-      User.findByIdAndUpdate(req.params.playerId, {$push: {previousGames: req.params.gameId}}, (err, user) => {
+      User.findOneAndUpdate({_id: req.body.id}, {$push: {"previousGames": req.body.gameId}}, (err, user) => {
          return (err) ? res.status(500).json(err) : res.status(201).json(user);
       });
   }

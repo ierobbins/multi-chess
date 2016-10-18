@@ -6,9 +6,11 @@ const Game = new mongoose.Schema({
   , black: {type: mongoose.Schema.Types.ObjectId, ref: "User"}
   , winner: {type: "String", enum: ["white", "black", "draw"]}
   , moves: [{
-      move: {type: "String"}
+      pgn: {type: "String"}
       , fen: {type: "String"}
   }]
+  // , pgn: [{type: "String"}]
+  // , fen: [{type: "String"}]
   , time: {type: "Number", enum: [5, 10, 15, 30]}
   , creationDate: "String"
   , status: "String"

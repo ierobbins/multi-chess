@@ -1,5 +1,21 @@
 <h1 ng-show="showWait" style="text-align: center;">WAITING FOR OTHER PLAYER</h1>
 
+<div class="modal" id="modal-game-over">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Game Over</h2>
+            </div>
+            <div class="modal-body">
+                <h1>{{status}}</h1>
+            </div>
+            <div class="modal-footer">
+                
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="row" ng-hide="showWait">
     <!-- BOARD AND CHAT COLUMN -->
@@ -13,10 +29,13 @@
     <!-- USERS INFO, TIMERS, AND PGN -->
     <div class="game-info-wrapper col-md-4">
         <div class="user-info">
-            <div class="opponent-info">
-                <h1>{{opponent.firstName}} {{opponent.lastName}}</h1>
-                <h3>{{opponent.fide}}</h3>
-            </div>
+            <span>
+                <img src="opponent.profilePictureUrl" alt="#" />
+                <div class="opponent-info">
+                    <h1>{{opponent.firstName}} {{opponent.lastName}}</h1>
+                    <h3>{{opponent.fide}}</h3>
+                </div>
+            </span>
             <div class="stopwatch-wrapper">
                 <div class="opponentTimer stopwatch"></div>
                 <ul class="oResults"></ul>
@@ -33,14 +52,19 @@
                 <div class="userTimer stopwatch"></div>
                 <ul class="uResults"></ul>
             </div>
-            <div class="current-user-info">
-                <h1>{{currentUser.firstName}} {{currentUser.lastName}}</h1>
-                <h3>{{currentUser.fide}}</h3>
-            </div>
+            <span>
+                <img src="currentUser.profilePictureUrl" alt="#" />
+                <div class="current-user-info">
+                    <h1>{{currentUser.firstName}} {{currentUser.lastName}}</h1>
+                    <h3>{{currentUser.fide}}</h3>
+                </div>
+            </span>
         </div>
         <div class="pgn-wrapper well">
             <div class="pgn-element">
-
+                <p>
+                    {{pgn}}
+                </p>
             </div>
         </div>
     </div>

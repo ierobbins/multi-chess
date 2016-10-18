@@ -55,15 +55,15 @@ angular.module("chessApp")
         }
 
         if(initGame.players[1].side === "white"){
-            this.addWhitePlayer(initGame.players[1].player);
+            this.addWhitePlayer(initGame.players[1].player._id);
         } else {
-            this.addBlackPlayer(initGame.players[1].player);
+            this.addBlackPlayer(initGame.players[1].player._id);
         }
 
         if(player === "host"){
-            this.addGameToPlayer(initGame.players[0].player);
+            this.addGameToPlayer(initGame.players[0].player._id);
         } else {
-            this.addGameToPlayer(initGame.players[1].player);
+            this.addGameToPlayer(initGame.players[1].player._id);
         }
 
         this.createBoard(userSide);
@@ -78,21 +78,21 @@ angular.module("chessApp")
     }
 
     this.addWhitePlayer = function(playerId){
-        return $http.put("/api/game/addWhite/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
+        return $http.put("/api/game/addWhite/:id", {playerId: playerId, id: gameId, status: "in-progress"})
             .then(response => {
                 return response.data;
             });
     }
 
     this.addBlackPlayer = function(playerId){
-        return $http.put("/api/game/addBlack/:id", {playerId: playerId, gameId: gameId, status: "in-progress"})
+        return $http.put("/api/game/addBlack/:id", {playerId: playerId, id: gameId, status: "in-progress"})
             .then(response => {
                 return response.data;
             });
     }
 
     this.addGameToPlayer = function(playerId){
-        return $http.put("/api/user/fb/:id", {playerId: playerId, gameId: gameId}).then(response => {
+        return $http.put("/api/user/fb/:id", {id: playerId, gameId: gameId}).then(response => {
             return response.data;
         });
     }
@@ -163,7 +163,9 @@ angular.module("chessApp")
         board = new ChessBoard("gameBoard", cfg);
     }
 
-
+    this.findCaptured = function(fen){
+        const symbols = 'ppppppppnnbbrrqkPPPPPPPPNNBBRRQK'; //TODO
+    }
 
     // socket.on("ready" data => {
     //

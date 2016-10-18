@@ -102,8 +102,6 @@ io.on("connection", socket => {
             };
             socket.join(room);
             socket.emit("wait");
-            console.log(currentGames[room]);
-            console.log("*************\n\n", currentGames, "\n\n*******************");
             updateRooms();
             return;
 
