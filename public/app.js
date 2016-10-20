@@ -39,4 +39,13 @@ angular.module("chessApp", ["ui.router"])
       , templateUrl: "./views/examine.html"
       , controller: "examineCtrl"
     })
+    .state("aiGame", {
+        url: "/deepPurple/:gameId"
+        , templateUrl: "./views/aiGame.html"
+        , controller: "aiGameCtrl"
+        , params: {
+            user: null
+            , side: null
+        }
+    });
 });

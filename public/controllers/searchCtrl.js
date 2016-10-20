@@ -8,26 +8,47 @@ angular.module("chessApp")
 
     $scope.createNewGame = function(){
         user = $scope.currentUser;
-        let newTime = parseInt($scope.time);
-        console.log("THIS IS NEW TIME \n\n\n\n", newTime, $scope.time);
-        if($scope.color === "white"){
-            userService.postNewGame({
-                host: $scope.currentUser._id
-                , white: $scope.currentUser._id
-                , time: newTime
-                , status: "waiting"
-                , creationDate: new Date()
-                }, user);
-        }
-        if($scope.color === "black"){
-            userService.postNewGame({
-                host: $scope.currentUser._id
-                , black: $scope.currentUser._id
-                , time: newTime
-                , status: "waiting"
-                , creationDate: new Date()
-                }, user);
-        }
+        if($scope.opponentType && $scope.color && $scope.time){
+            if($scope.opponentType === "human"){
+                let newTime = parseInt($scope.time);
+                console.log("THIS IS NEW TIME \n\n\n\n", newTime, $scope.time);
+                if($scope.color === "white"){
+                    userService.postNewGame({
+                        host: $scope.currentUser._id
+                        , white: $scope.currentUser._id
+                        , time: newTime
+                        , status: "waiting"
+                        , creationDate: new Date()
+                    }, user);
+                }
+                if($scope.color === "black"){
+                    userService.postNewGame({
+                        host: $scope.currentUser._id
+                        , black: $scope.currentUser._id
+                        , time: newTime
+                        , status: "waiting"
+                        , creationDate: new Date()
+                    }, user);
+                }
+            } else if ($scope.opponentType === "ai"){
+                if($scope.color === "white"){
+                    userService.postNewAiGame({
+                        host: $scope.currentUser._id
+                        , white: $scope.currentUser._id
+                        , status: "deepPurple"
+                        , creationDate: new Date()
+                    }, user);
+                }
+                if($scope.color === "black"){
+                    userService.postNewAiGame({
+                        host: $scope.currentUser._id
+                        , black: $scope.currentUser._id
+                        , status: "deepPurple"
+                        , creationDate: new Date()
+                    }, user);
+                }
+            }
+        }    
     }
 
     $scope.joinGame = function(room){

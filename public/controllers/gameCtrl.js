@@ -6,8 +6,8 @@ angular.module("chessApp")
     $scope.opponentSide = ($scope.userSide === "white") ? "black" : "white";
     $scope.gameId       = $stateParams.gameId;
     $scope.time         = $stateParams.time;
-    $scope.status       = "";
 
+    $scope.showGameOver = false;
     $scope.showWait = true;
 
     if($stateParams.user){
@@ -31,16 +31,38 @@ angular.module("chessApp")
             document.querySelector(".userTimer")
             , document.querySelector(".uResults")
             , data.time
+            , $scope.overOnTime
         );
         $scope.opponentTime = new Stopwatch(
             document.querySelector(".opponentTimer")
             , document.querySelector(".oResults")
             , data.time
+            , $scope.overOnTime
         );
     });
 
     socket.on("time", data => {
-        //TODO
+        $scope.message = `${data.winner} wins on time`;
+        console.log("TIME CALLED", data);
+        $("#game-over-modal").addClass("show");
+    });
+
+    socket.on("resign", data => {
+        $scope.message = `${data.loser} resigns, ${data.winner} wins`;
+        console.log("RESIGN CALLED", data);
+        $("#game-over-modal").addClass("show");
+    });
+
+    socket.on("checkmate", data => {
+        $scope.message = `${data.winner} wins by checkmate`;
+        console.log("CHECKMATE CALLED", data);
+        $("#game-over-modal").addClass("show");
+    });
+
+    socket.on("draw", data => {
+        $scope.message = `Draw by ${data.status}`;
+        console.log("DRAW CALLED", data);
+        $("#game-over-modal").addClass("show");
     });
 
     socket.on("move", data => {
@@ -55,93 +77,45 @@ angular.module("chessApp")
             $scope.userTime.stop();
             $scope.opponentTime.start();
         }
+        $scope.checkGameOver();
         if($scope.isHost){
             gameService.addMove(data.room, data.move);
         }
     });
 
-    // $scope.onDragStart = function(source , piece, position, orientation){
-    //     if($scope.game.game_over() === true ||
-    //        $scope.game.turn() === "w" && piece.search(/^b/) !== -1 ||
-    //        $scope.game.turn() === "b" && piece.search(/^w/) !== -1 ||
-    //        $scope.game.turn() !== $scope.userSide.charAt(0)){
-    //            return false;
-    //        }
-    // }
-    //
-    // $scope.onSnapEnd = function(){
-    //     $scope.board.position($scope.game.fen());
-    // }
-    //
-    // $scope.onDrop = function(source, target, piece, newPos, oldPos, orientation){
-    //     let move = $scope.game.move({
-    //         from: source
-    //         , to: target
-    //         , promotion: 'q'
-    //     });
-    //     console.log("what the fuck is going on!!!!!!!!!!!!!!!!!!!!!!");
-    //     if(move === null) { return "snapback"; }
-    //     console.log($scope.userSide.charAt(0), game.turn());
-    //     console.log($scope.opponentSide.charAt(0), game.turn());
-    //     console.log($scope.userSide.charAt(0) === game.turn());
-    //     console.log($scope.opponentSide.charAt(0) === game.turn());
-    //     if($scope.userSide.charAt(0) === game.turn()){
-    //         $scope.opponentTime.stop();
-    //         $scope.userTime.start();
-    //     } else if($scope.opponentSide.charAt(0) === game.turn()){
-    //         $scope.userTime.stop();
-    //         $scope.opponentTime.start();
-    //     }
-    //
-    //     let initMove = {};
-    //     initMove.pgn = $scope.game.pgn();
-    //     initMove.fen = $scope.game.fen();
-    //     socket.emit("move", {
-    //         room: $scope.gameId
-    //         , source: source
-    //         , target: target
-    //         , piece: piece
-    //         , move: initMove
-    //         , newPosition: ChessBoard.objToFen(newPos)
-    //         , oldPosition: ChessBoard.objToFen(oldPos)
-    //     });
-    // }
+    $scope.resign = function(){
+        $scope.userTime.stop();
+        $scope.opponentTime.stop();
+        gameService.resign($scope.userSide, $scope.opponent.side, $scope.gameId);
+    }
 
-    if($scope.isHost){
-        if($scope.userTime.times[0] < 0){
-            if($scope.userSide === "white"){
-                socket.emit("time", {
-                    room: $scope.gameId
-                    , win: $scope.opponent
-                    , lose: $scope.currentUser
-                });
-                gameService.gameOver($scope.gameId, "black", "overOnTime");
-            } else {
-                socket.emit("time", {
-                    room: $scope.gameId
-                    , win: $scope.opponent
-                    , lose: $scope.currentUser
-                });
-                gameService.gameOver($scope.gameId, "white", "overOnTime");
+    $scope.overOnTime = function(){
+        $scope.userTime.stop();
+        $scope.opponentTime.stop();
+        let win = ($scope.userTime.times[0] < 0) ? $scope.opponentSide : $scope.userSide;
+        gameService.overOnTime($scope.gameId, win);
+    }
+
+    $scope.checkGameOver = function(){
+        if($scope.game.in_checkmate() || $scope.game.in_stalemate() || $scope.game.insufficient_material()){
+            $scope.userTime.stop();
+            $scope.opponentTime.stop();
+            if($scope.game.in_checkmate()){
+                let win = ($scope.game.turn() === "w") ? "black" : "white";
+                gameService.gameOver($scope.gameId, win, "checkmate");
+                if($scope.isHost){
+                    socket.emit("checkmate", {
+                        gameId: $scope.gameId
+                        , winner: win
+                    });
+                }
             }
-        }
-        if($scope.opponentTime.times[0] < 0){
-            if($scope.userSide === "white"){
-                socket.emit("time", {
-                    room: $scope.gameId
-                    , win: $scope.currentUser
-                    , lose: $scope.opponent
-                });
-                gameService.gameOver($scope.gameId, "white", "overOnTime");
-            } else {
-                socket.emit("time", {
-                    room: $scope.gameId
-                    , win: $scope.currentUser
-                    , lose: $scope.opponent
-                });
-                gameService.gameOver($scope.gameId, "black", "overOnTime");
+            if($scope.game.in_stalemate()){
+                gameService.drawGame($scope.gameId, "stalemate");
+            }
+            if($scope.game.insufficient_material()){
+                gameService.drawGame($scope.gameId, "insufficient material");
             }
         }
     }
-
 });

@@ -1,5 +1,6 @@
 class Stopwatch {
-    constructor(display, results, initTime) {
+
+    constructor(display, results, initTime, cb) {
         this.running = false;
         this.display = display;
         this.results = results;
@@ -7,6 +8,7 @@ class Stopwatch {
         this.times = [initTime, 0, 0];
         //this.reset();
         this.print(this.times);
+        this.cb = cb
     }
 
     reset() {
@@ -73,6 +75,7 @@ class Stopwatch {
             this.times[2] -= diff / 10;
         } else {
             this.stop();
+            this.cb()
         }
     }
 

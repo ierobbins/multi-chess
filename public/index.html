@@ -23,11 +23,11 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.8/angular.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-router/0.3.1/angular-ui-router.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-    <script src="./resources/library/jquery-1.11.1.js"></script>
+    <script src="./resources/library/jquery-3.1.1.min.js"></script>
     <script src="./resources/library/chess.min.js"></script>
     <script src="./resources/library/chessboard-0.3.0.min.js"></script>
     <script src="./resources/library/timer.js"></script>
+    <script src="./resources/library/aiChess.js"></script>
     <script src="../socket.io/socket.io.js"></script>
     <script src="app.js"></script>
     <script src="controllers/examineCtrl.js"></script>
@@ -36,10 +36,11 @@
     <script src="controllers/loginCtrl.js"></script>
     <script src="controllers/profileCtrl.js"></script>
     <script src="controllers/searchCtrl.js"></script>
-    <script src="controllers/socketCtrl.js"></script>
+    <script src="controllers/aiGameCtrl.js"></script>
     <script src="services/userService.js"></script>
     <script src="services/sockets.js"></script>
+    <script src="services/aiGameService.js"></script>
     <script src="services/gameService.js"></script>
-    <script src="client.js"></script>
+    <script src="/directives/gameOver.js"></script>
   </body>
 </html>

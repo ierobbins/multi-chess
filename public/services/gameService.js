@@ -8,6 +8,7 @@ angular.module("chessApp")
     let game;
     let board;
     let gameId;
+    let resigned = false;
 
     this.connectSocket = function(id, user, side, time){
         socket.emit("join", {
@@ -109,19 +110,32 @@ angular.module("chessApp")
         });
     }
 
+    this.drawGame = function(gameId, endStatus){
+        if(player === "host"){
+            socket.emit("draw", {
+                gameId: gameId
+                , status: endStatus
+            });
+        }
+        return $http.put("/api/game/drawGame/:id", {id: gameId, status: endStatus}).then(response => {
+            return response.data;
+        });
+    }
+
 
     //////// BOARD VALID MOVE FUNCTIONS \\\\\\\\\\
     this.onDragStart = function(source ,piece, position, orientation){
         if(game.game_over() === true ||
            game.turn() === "w" && piece.search(/^b/) !== -1 ||
            game.turn() === "b" && piece.search(/^w/) !== -1 ||
-           game.turn() !== userSide.charAt(0)){
+           game.turn() !== userSide.charAt(0) ||
+           resigned){
                return false;
            }
     }
 
     this.onDrop = function(source, target, piece, newPos, oldPos, orientation){
-
+        console.log(game.fen());
         let move = game.move({
             from: source
             , to: target
@@ -167,34 +181,25 @@ angular.module("chessApp")
         const symbols = 'ppppppppnnbbrrqkPPPPPPPPNNBBRRQK'; //TODO
     }
 
-    // socket.on("ready" data => {
-    //
-    // });
+    this.resign = function(side, winColor, gameId){
+        resigned = true;
+        this.gameOver(gameId, winColor, "resign")
+        socket.emit("resign", {
+            gameId: gameId
+            , side: side
+            , winner: winColor
+        });
+    }
 
-    // window.onload = () => {
-    // //   initGame();
-    // // }
-    //
-    // function initGame(){
-    //   const cfg = {
-    //     draggable: true
-    //     , position: "start"
-    //     , onDrop: handleMove
-    //   };
-    //   board = new ChessBoard("gameBoard", cfg);
-    //   game = new Chess();
-    // }
-    //
-    // function handleMove(source, target){
-    //   let move = game.move({from: source, to: target});
-    //
-    //   if(move === null) return "snapback";
-    //   else socket.emit("move", move);
-    // }
-    //
-    // socket.on("move", msg => {
-    //   game.move(msg);
-    //   board.position(game.fen());
-    // });
+    this.overOnTime = function(gameId, winColor){
+        resigned = true;    //no player resigned, but this has the same effect of turning off the game
+        this.gameOver(gameId, winColor, "time");
+        if(player === "host"){
+            socket.emit("time", {
+                gameId: gameId
+                , winner: winColor
+            });
+        }
+    }
 
 });

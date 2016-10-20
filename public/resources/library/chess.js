@@ -1275,7 +1275,7 @@ var Chess = function(fen) {
     },
 
     game_over: function() {
-      return half_moves >= 100 ||
+      return //half_moves >= 100 ||
              in_checkmate() ||
              in_stalemate() ||
              insufficient_material() ||

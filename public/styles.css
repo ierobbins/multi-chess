@@ -53,3 +53,26 @@
     width: 150px;
     border-radius: 10px;
 }
+
+#game-over-modal{
+    display: none;
+    z-index: 999999;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: rgba(0,0,0,.8);
+}
+
+.show {
+    display: block;
+}
+
+div.modal-dialog {
+    margin-top: 300px;
+}
+
+.game-over-message{
+    font-family: impact;
+}

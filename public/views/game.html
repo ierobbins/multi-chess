@@ -1,21 +1,21 @@
 <h1 ng-show="showWait" style="text-align: center;">WAITING FOR OTHER PLAYER</h1>
 
-<div class="modal" id="modal-game-over">
+<div class="" id="game-over-modal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Game Over</h2>
             </div>
-            <div class="modal-body">
-                <h1>{{status}}</h1>
+            <div class="modal-body game-over-message">
+                <h1>{{message}}</h1>
             </div>
             <div class="modal-footer">
-                
+                <button type="button" ui-sref="search" class="btn btn-primary">Return to Search</button>
+                <button type="button" ng-click="closeGameOver()">Close</button>
             </div>
         </div>
     </div>
 </div>
-
 
 <div class="row" ng-hide="showWait">
     <!-- BOARD AND CHAT COLUMN -->
@@ -58,12 +58,13 @@
                     <h1>{{currentUser.firstName}} {{currentUser.lastName}}</h1>
                     <h3>{{currentUser.fide}}</h3>
                 </div>
+                <button type="button" ng-click="resign()">Resign</button>
             </span>
         </div>
         <div class="pgn-wrapper well">
             <div class="pgn-element">
                 <p>
-                    {{pgn}}
+                    <h4>{{pgn}}</h4>
                 </p>
             </div>
         </div>

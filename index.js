@@ -62,6 +62,10 @@ io.on("connection", socket => {
 
     socket.on("error", err => console.log( err, "On error" ) );
 
+    // socket.on("login", data => {
+    //     socket.user = data.user._id;
+    // });
+
     socket.on("disconnect", data => {
         connections.splice(connections.indexOf(data), 1);
         console.log(`Disconnected, ${connections.length} socket(s) now connected on ${port}`);
@@ -129,20 +133,65 @@ io.on("connection", socket => {
     socket.on("resign", data => {
         const room = data.gameId;
         if(room in currentGames){
-            io.sockets.to(room).emit("player-resigned", {"side": data.side});
-            currentGames[room].players[0].socket.leave(room);
-            currentGames[room].players[1].socket.leave(room);
+            io.sockets.to(room).emit("player-resigned", {"side": data.side, "winner": data.winner});
+            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
+            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
+            // if(playerOneSocket) { playerOneSocket.leave(room); }
+            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
+            delete currentGames[room];
+            updateRooms();
+        }
+    });
+
+    socket.on("checkmate", data => {
+        console.log(data);
+        const room = data.gameId;
+        if(room in currentGames){
+            io.sockets.to(room).emit("checkmate", {"winner": data.winner});
+            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
+            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
+            // if(playerOneSocket) { playerOneSocket.leave(room); }
+            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
             delete currentGames[room];
             updateRooms();
         }
     });
 
     socket.on("time", data => {
-        io.sockets.to(data.room).emit("time", {
-            win: data.win
-            , lose: data.lose
-        });
+        const room = data.gameId;
+        if(room in currentGames){
+            io.sockets.to(room).emit("time", {"winner": data.winner});
+            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
+            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
+            // if(playerOneSocket) { playerOneSocket.leave(room); }
+            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
+            delete currentGames[room];
+            updateRooms();
+        }
     });
+
+    socket.on("draw", data => {
+        const room = data.gameId;
+        if(room in currentGames){
+            io.sockets.to(room).emit("draw", {"status": data.status});
+            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
+            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
+            // if(playerOneSocket) { playerOneSocket.leave(room); }
+            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
+            delete currentGames[room];
+            updateRooms();
+        }
+    });
+
+    function findSocket(playerId){
+        let userSocket = {};
+        for(let i = 0; i < connections.length; i++){
+            if(connections[i].user === playerId){
+                userSocket = connections[i];
+            }
+        }
+        return userSocket;
+    }
 
     function updateRooms(){
         io.sockets.emit("get games", currentGames);

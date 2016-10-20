@@ -27,7 +27,13 @@ module.exports = {
     }
 
     , gameOver(req, res){
-        Game.findOneAndUpdate({_id: req.body.id}, {$push: {"moves": req.params.move}}, (err, game) => {
+        Game.findOneAndUpdate({_id: req.body.id}, {"winner": req.body.winner, "status": req.body.status}, (err, game) => {
+            return (err) ? res.status(500).json(err) : res.status(200).json(game);
+        });
+    }
+
+    , drawGame(req, res){
+        Game.findOneAndUpdate({_id: req.body.id}, {"winner": "draw", "status": req.body.status}, (err, game) => {
             return (err) ? res.status(500).json(err) : res.status(200).json(game);
         });
     }

@@ -8,4 +8,5 @@ module.exports = app => {
   app.route("/api/game/addBlack/:id").put(gameCtrl.addBlackPlayer);
   app.route("/api/game/addMove/:id").put(gameCtrl.addMove);
   app.route("/api/game/gameOver/:id").put(gameCtrl.gameOver);
+  app.route("/api/game/drawGame/:id").put(gameCtrl.drawGame);
 };

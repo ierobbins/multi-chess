@@ -1,4 +1,4 @@
 angular.module("chessApp")
-.controller("loginCtrl", function($scope, socket){
+.controller("loginCtrl", function($scope){
 
 });

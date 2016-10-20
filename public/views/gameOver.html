@@ -1,0 +1,17 @@
+<div class="modal fade" id="game-over-modal" ng-show="showGameOver">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Game Over</h2>
+            </div>
+            <div class="modal-body">
+                <h1>{{status}}</h1>
+                {{currentUser}}
+            </div>
+            <div class="modal-footer">
+                <button type="button" ui-sref="search" class="btn btn-primary">Return to Search</button>
+                <button type="button" ng-click="closeGameOver()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
