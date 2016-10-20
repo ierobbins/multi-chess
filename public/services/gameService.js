@@ -107,13 +107,13 @@ angular.module("chessApp")
         });
     }
 
-    this.gameOver = function(gameId, winColor, endStatus, user, opponent){
+    this.gameOver = function(gameId, winColor, endStatus){
         return $http.put("/api/game/gameOver/:id", {id: gameId, winner: winColor, status: endStatus}).then(response => {
             return response.data;
         });
     }
 
-    this.drawGame = function(gameId, endStatus, user, opponent){
+    this.drawGame = function(gameId, endStatus){
         if(player === "host"){
             socket.emit("draw", {
                 gameId: gameId
@@ -180,11 +180,7 @@ angular.module("chessApp")
         board = new ChessBoard("gameBoard", cfg);
     }
 
-    this.findCaptured = function(fen){
-        const symbols = 'ppppppppnnbbrrqkPPPPPPPPNNBBRRQK'; //TODO
-    }
-
-    this.resign = function(side, winColor, gameId, user, opponent){
+    this.resign = function(side, winColor, gameId){
         resigned = true;
         this.gameOver(gameId, winColor, "resign")
         socket.emit("resign", {
@@ -194,7 +190,7 @@ angular.module("chessApp")
         });
     }
 
-    this.overOnTime = function(gameId, winColor, user, opponent){
+    this.overOnTime = function(gameId, winColor){debugger;
         resigned = true;    //no player resigned, but this has the same effect of turning off the game
         this.gameOver(gameId, winColor, "time");
         if(player === "host"){
@@ -233,6 +229,73 @@ angular.module("chessApp")
         return $http.put("/api/user/fb/fide/:id", {id: currUser._id, fide: newUserFide}).then(response => {
             return response.data;
         });
+    }
+
+    let symbols = 'ppppppppnnbbrrqkPPPPPPPPNNBBRRQK'.split("").sort();
+    this.findCaptured = function(fen){
+
+        const symbolKey = {
+            "p": "bP", "n": "bN", "b": "bB", "r": "bR", "q": "bQ", "k": "bK",
+            "P": "wP", "N": "wN", "B": "wB", "R": "wR", "Q": "wQ", "K": "wK"
+        };
+
+        let newFen = [];
+        for(let i = 0; i < fen.length; i++){
+            if(symbols.indexOf(fen.charAt(i)) !== -1){
+                newFen.push(fen.charAt(i));
+            }
+            if(fen.charAt(i) === " ") { break; }
+        }
+
+        newFen = newFen.sort();
+        let captured = "";
+        if(newFen.length !== symbols.length){
+            for(let j = 0; j < newFen.length; j++){
+                if(newFen[j] !== symbols[j]){
+                    captured = symbols[j];
+                    symbols.splice(j, 1);
+                }
+            }
+        }
+
+        if(captured) { return symbolKey[captured]; }
+        return null;
+
+    }
+
+    this.appendCaptured = function(captured){
+
+        if(!captured) { return; }
+
+        if(userSide === "white"){
+            if(captured.charAt(0) === "b"){
+                if(captured.charAt(1) === "P"){
+                    $("#captured-pieces-user").prepend(`<div class="cap-piece"><img class="cap-piece-image" src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                } else {
+                    $("#captured-pieces-user").append(`<div class="cap-piece"><img class="cap-piece-image" src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                }
+            } else {
+                if(captured.charAt(1) === "P"){
+                    $("#captured-pieces-opponent").prepend(`<div class="cap-piece"><img class="cap-piece-image" src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                } else {
+                    $("#captured-pieces-opponent").append(`<div class="cap-piece"><img class="cap-piece-image" src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                }
+            }
+        } else {
+            if(captured.charAt(0) === "w"){
+                if(captured.charAt(1) === "P"){
+                    $("#captured-pieces-user").prepend(`<div class="cap-piece"><img src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                } else {
+                    $("#captured-pieces-user").append(`<div class="cap-piece"><img src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                }
+            } else {
+                if(captured.charAt(1) === "P"){
+                    $("#captured-pieces-opponent").prepend(`<div class="cap-piece"><img src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                } else {
+                    $("#captured-pieces-opponent").append(`<div class="cap-piece"><img src="../img/chesspieces/wikipedia/${captured}.png"></div>`);
+                }
+            }
+        }
     }
 
 });

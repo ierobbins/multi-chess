@@ -73,9 +73,9 @@ class Stopwatch {
                 this.times[0] --;
             }
             this.times[2] -= diff / 10;
-        } else {
+        } else {debugger;
             this.stop();
-            this.cb()
+            this.cb();
         }
     }
 

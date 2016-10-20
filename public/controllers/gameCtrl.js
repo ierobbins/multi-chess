@@ -41,7 +41,7 @@ angular.module("chessApp")
         );
     });
 
-    socket.on("time", data => {
+    socket.on("time", data => {debugger;
         $scope.message = `${data.winner} wins on time`;
         console.log("TIME CALLED", data);
         $("#game-over-modal").addClass("show");
@@ -76,7 +76,9 @@ angular.module("chessApp")
     socket.on("move", data => {
         $scope.game.move({from: data.source, to: data.target});
         $scope.board.position($scope.game.fen());
-        $scope.capturedPieces = gameService.findCaptured($scope.game.fen()); //TODO
+        $scope.capturedPieces = gameService.findCaptured($scope.game.fen());
+        console.log($scope.capturedPieces);
+        gameService.appendCaptured($scope.capturedPieces)
         $scope.pgn = $scope.game.pgn();
         if($scope.userSide.charAt(0) === $scope.game.turn()){
             $scope.opponentTime.stop();
@@ -94,14 +96,14 @@ angular.module("chessApp")
     $scope.resign = function(){
         $scope.userTime.stop();
         $scope.opponentTime.stop();
-        gameService.resign($scope.userSide, $scope.opponentSide, $scope.gameId, $scope.currentUser, $scope.opponent);
+        gameService.resign($scope.userSide, $scope.opponentSide, $scope.gameId);
     }
 
-    $scope.overOnTime = function(){
+    $scope.overOnTime = function(){debugger;
         $scope.userTime.stop();
         $scope.opponentTime.stop();
         let win = ($scope.userTime.times[0] < 0) ? $scope.opponentSide : $scope.userSide;
-        gameService.overOnTime($scope.gameId, win, $scope.currentUser, $scope.opponent);
+        gameService.overOnTime($scope.gameId, win);
     }
 
     $scope.checkGameOver = function(){
@@ -110,7 +112,7 @@ angular.module("chessApp")
             $scope.opponentTime.stop();
             if($scope.game.in_checkmate()){
                 let win = ($scope.game.turn() === "w") ? "black" : "white";
-                gameService.gameOver($scope.gameId, win, "checkmate", $scope.currentUser, $scope.opponent);
+                gameService.gameOver($scope.gameId, win, "checkmate");
                 if($scope.isHost){
                     socket.emit("checkmate", {
                         gameId: $scope.gameId
@@ -119,10 +121,10 @@ angular.module("chessApp")
                 }
             }
             if($scope.game.in_stalemate()){
-                gameService.drawGame($scope.gameId, "stalemate", $scope.currentUser, $scope.opponent);
+                gameService.drawGame($scope.gameId, "stalemate");
             }
             if($scope.game.insufficient_material()){
-                gameService.drawGame($scope.gameId, "insufficient material", $scope.currentUser, $scope.opponent);
+                gameService.drawGame($scope.gameId, "insufficient material");
             }
         }
     }

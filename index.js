@@ -70,7 +70,7 @@ io.on("connection", socket => {
         connections.splice(connections.indexOf(data), 1);
         console.log(`Disconnected, ${connections.length} socket(s) now connected on ${port}`);
 
-        for(let key in currentGames){
+        for(let key in currentGames){  //TODO this does not work because sockets are no longer tied to rooms
             let game = currentGames[key]
             for(let i = 0; i < game.players.length; i++){
                 if(game.players[i].socket === socket){
@@ -134,10 +134,6 @@ io.on("connection", socket => {
         const room = data.gameId;
         if(room in currentGames){
             io.sockets.to(room).emit("player-resigned", {"side": data.side, "winner": data.winner});
-            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
-            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
-            // if(playerOneSocket) { playerOneSocket.leave(room); }
-            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
             delete currentGames[room];
             updateRooms();
         }
@@ -148,10 +144,6 @@ io.on("connection", socket => {
         const room = data.gameId;
         if(room in currentGames){
             io.sockets.to(room).emit("checkmate", {"winner": data.winner});
-            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
-            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
-            // if(playerOneSocket) { playerOneSocket.leave(room); }
-            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
             delete currentGames[room];
             updateRooms();
         }
@@ -161,10 +153,6 @@ io.on("connection", socket => {
         const room = data.gameId;
         if(room in currentGames){
             io.sockets.to(room).emit("time", {"winner": data.winner});
-            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
-            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
-            // if(playerOneSocket) { playerOneSocket.leave(room); }
-            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
             delete currentGames[room];
             updateRooms();
         }
@@ -174,10 +162,6 @@ io.on("connection", socket => {
         const room = data.gameId;
         if(room in currentGames){
             io.sockets.to(room).emit("draw", {"status": data.status});
-            // let playerOneSocket = findSocket(currentGames[room].players[0].player._id);
-            // let playerTwoSocket = findSocket(currentGames[room].players[1].player._id);
-            // if(playerOneSocket) { playerOneSocket.leave(room); }
-            // if(playerTwoSocket) { playerTwoSocket.leave(room); }
             delete currentGames[room];
             updateRooms();
         }
