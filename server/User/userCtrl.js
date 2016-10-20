@@ -48,4 +48,11 @@ module.exports = {
       });
   }
 
+  , updateFide(req, res){
+      console.log(req.body);
+      User.findOneAndUpdate({_id: req.body.id}, {fide: req.body.fide}, (err, user) => {
+          return (err) ? res.status(500).json(err) : res.status(201).json(user);
+      });
+  }
+
 }

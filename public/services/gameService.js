@@ -4,6 +4,7 @@ angular.module("chessApp")
     let userSide;
     let opponentSide;
     let player;
+    let currUser;
     let opponent;
     let game;
     let board;
@@ -49,10 +50,12 @@ angular.module("chessApp")
             userSide = initGame.players[0].side;
             opponentSide = initGame.players[1].side;
             opponent = initGame.players[1].player;
+            currUser = initGame.players[0].player;
         } else {
             userSide = initGame.players[1].side;
             opponentSide = initGame.players[0].side;
             opponent = initGame.players[0].player;
+            currUser = initGame.players[1].player;
         }
 
         if(initGame.players[1].side === "white"){
@@ -104,13 +107,13 @@ angular.module("chessApp")
         });
     }
 
-    this.gameOver = function(gameId, winColor, endStatus){
+    this.gameOver = function(gameId, winColor, endStatus, user, opponent){
         return $http.put("/api/game/gameOver/:id", {id: gameId, winner: winColor, status: endStatus}).then(response => {
             return response.data;
         });
     }
 
-    this.drawGame = function(gameId, endStatus){
+    this.drawGame = function(gameId, endStatus, user, opponent){
         if(player === "host"){
             socket.emit("draw", {
                 gameId: gameId
@@ -181,7 +184,7 @@ angular.module("chessApp")
         const symbols = 'ppppppppnnbbrrqkPPPPPPPPNNBBRRQK'; //TODO
     }
 
-    this.resign = function(side, winColor, gameId){
+    this.resign = function(side, winColor, gameId, user, opponent){
         resigned = true;
         this.gameOver(gameId, winColor, "resign")
         socket.emit("resign", {
@@ -191,7 +194,7 @@ angular.module("chessApp")
         });
     }
 
-    this.overOnTime = function(gameId, winColor){
+    this.overOnTime = function(gameId, winColor, user, opponent){
         resigned = true;    //no player resigned, but this has the same effect of turning off the game
         this.gameOver(gameId, winColor, "time");
         if(player === "host"){
@@ -200,6 +203,36 @@ angular.module("chessApp")
                 , winner: winColor
             });
         }
+    }
+
+    this.calculateNewFide = (winColor) => {debugger;
+
+        userFide = currUser.fide;
+        opponentFide = opponent.fide;
+
+        let k = 32;
+        let r1 = Math.pow(10, (userFide / 400));
+        let r2 = Math.pow(10, (opponentFide / 400));
+
+        let e1 = r1 / (r1 + r2);
+        let e2 = r2 / (r1 + r2);
+
+        let s1 = 0, s2 = 0;
+
+        if(winColor === "draw"){
+            s1 = 0.5; s2 = 0.5;
+        } else if (winColor === userSide){
+            s1 = 1;
+        } else {
+            s2 = 1;
+        }
+
+        let newUserFide     = r1 + k * (s1 - e1);
+        let newOpponentFide = r2 + k * (s2 - e2);
+
+        return $http.put("/api/user/fb/fide/:id", {id: currUser._id, fide: newUserFide}).then(response => {
+            return response.data;
+        });
     }
 
 });
