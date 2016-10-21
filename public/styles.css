@@ -1,9 +1,20 @@
+/*LOGIN PAGE*/
+.jumbotron{
+    background-image: url("../img/chessBackground.jpg");
+    background-attachment: fixed;
+    height: 600px;
+}
+
+
+
 /*SEARCH HTML PAGE*/
 .games-list{
   margin: 30px;
 }
 
-
+.engine-component{
+    font-size: 32px;
+}
 
 
 /*GAME HTML PAGE*/

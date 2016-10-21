@@ -1,4 +1,4 @@
-var chessAI = function(initSide){
+var chessAI = function(initSide, cb){
 
     this.makeAMove = function(source, target){
         let parsed = ParseMove(source, target);
@@ -2357,7 +2357,9 @@ var chessAI = function(initSide){
 
     function UpdateDOMStats(dom_score, dom_depth) {
 
-    	var scoreText = "Score: " + (dom_score / 100).toFixed(2);
+        cb((dom_score / 100).toFixed(2));
+
+        var scoreText = "Score: " + (dom_score / 100).toFixed(2);
     	if(Math.abs(dom_score) > MATE - MAXDEPTH) {
     		scoreText = "Score: Mate In " + (MATE - Math.abs(dom_score) - 1) + " moves";
     	}
@@ -2369,7 +2371,6 @@ var chessAI = function(initSide){
     	$("#TimeOut").text("Time: " + (($.now()-SearchController.start)/1000).toFixed(1) + "s");
     	$("#BestOut").text("BestMove: " + PrMove(SearchController.best));
     }
-    console.log(SearchController.thinking);
 
     this.getPrMove = function(move){
         return PrMove

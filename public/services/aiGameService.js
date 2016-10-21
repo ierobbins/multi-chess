@@ -76,7 +76,7 @@ angular.module("chessApp")
     this.createBoard = function(colorSide){
         userSide = colorSide;
         side = (colorSide === "white") ? 0 : 1;
-        game = new chessAI(side);
+        game = new chessAI(side, this.changeEmoji);
         game.init()
         game.NewGame(START_FEN);
         let gb = game.getGameBoard();
@@ -100,6 +100,35 @@ angular.module("chessApp")
                 console.log(gb);
             }, 3000);
         }
+    }
+
+    this.changeEmoji = function(initScore){ debugger;
+        let score = parseFloat(initScore);
+        let emoji;
+        console.log(score);
+        if(score < -4){
+            emoji = "underneg4";
+        } else if(score < -2.5){
+            emoji = "neg4to2-5";
+        } else if(score < -1.5){
+            emoji = "neg2-5to1-5";
+        } else if(score < -0.5){
+            emoji = "neg1-5to0-5";
+        } else if(score < 0.5){
+            emoji = "neg0-5to0-5";
+        } else if(score < 1.5){
+            emoji = "0-5to1-5";
+        } else if(score < 2.5){
+            emoji = "1-5to2-5";
+        } else if(score < 4){
+            emoji = "2-5to4";
+        } else if(4 <= score){
+            emoji = "4andup";
+        }
+        console.log(score);
+        console.log(emoji);
+        $("#aiEmoji").empty();
+        $("#aiEmoji").append(`<img src="../img/emojis/${emoji}.png">`);
     }
 
 })
